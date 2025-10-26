@@ -3,7 +3,6 @@
 .idea/
 /android/
 /addons/
-/assets/
 .editorconfig
 *.uid
 *.old
