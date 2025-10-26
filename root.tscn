@@ -1,0 +1,658 @@
+[gd_scene load_steps=13 format=3 uid="uid://b3usl3s80gsfv"]
+
+[ext_resource type="Script" uid="uid://cmfb8cjkl5rih" path="res://CameraController.cs" id="1_28aoi"]
+[ext_resource type="Texture2D" uid="uid://qpovrtey7482" path="res://assets/Orange/texture_02.png" id="1_pq8q7"]
+[ext_resource type="Script" uid="uid://3sn3actp5c4c" path="res://SettingsInterface.cs" id="3_28aoi"]
+[ext_resource type="Script" uid="uid://jax4fyndlu5v" path="res://SettingSlider.cs" id="4_28aoi"]
+[ext_resource type="Texture2D" uid="uid://ur41xk1wbc0d" path="res://assets/input_prompts/keyboard_escape.png" id="4_vyht1"]
+[ext_resource type="Texture2D" uid="uid://c0o6owyd4q1kn" path="res://assets/input_prompts/keyboard_escape_outline.png" id="5_bf3um"]
+[ext_resource type="Texture2D" uid="uid://dejc6mnfkor3l" path="res://assets/kenney_crosshair-pack/Outline Retina/crosshair180.png" id="5_jnlp7"]
+[ext_resource type="Script" uid="uid://bvja3o46menkr" path="res://StickSettingsMenu.cs" id="6_tw3kd"]
+[ext_resource type="Script" uid="uid://d24wm1j8wwq63" path="res://GyroSettingsMenu.cs" id="7_gd4vy"]
+[ext_resource type="Script" uid="uid://caw78ecfletkc" path="res://Plot.cs" id="8_gd4vy"]
+[ext_resource type="Script" uid="uid://cibyh1bmoy3kh" path="res://VideoSettingsMenu.cs" id="9_qw60f"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pyidc"]
+albedo_texture = ExtResource("1_pq8q7")
+uv1_triplanar = true
+
+[node name="root" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+fov = 90.0
+script = ExtResource("1_28aoi")
+
+[node name="WorldGeometry" type="Node3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="WorldGeometry"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_pyidc")
+size = Vector3(10, 1, 10)
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -72.0
+offset_top = -72.0
+offset_right = 72.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_jnlp7")
+
+[node name="Interface" type="Control" parent="." node_paths=PackedStringArray("stickTab", "gyroTab", "videoTab", "stickSettings", "gyroSettings", "videoSettings", "settingsContainer", "escRect", "escOutlineRect")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_28aoi")
+stickTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Stick")
+gyroTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Gyro")
+videoTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Video")
+stickSettings = NodePath("VBoxContainer/SettingsContainer/StickSettings")
+gyroSettings = NodePath("VBoxContainer/SettingsContainer/GyroSettings")
+videoSettings = NodePath("VBoxContainer/SettingsContainer/VideoSettings")
+settingsContainer = NodePath("VBoxContainer/SettingsContainer")
+escRect = NodePath("VBoxContainer/EscButton")
+escOutlineRect = NodePath("VBoxContainer/EscButtonOutline")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="EscButton" type="TextureRect" parent="Interface/VBoxContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("4_vyht1")
+stretch_mode = 2
+
+[node name="EscButtonOutline" type="TextureRect" parent="Interface/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("5_bf3um")
+stretch_mode = 2
+
+[node name="SettingsContainer" type="VBoxContainer" parent="Interface/VBoxContainer"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+
+[node name="Tabs" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer"]
+layout_mode = 2
+
+[node name="Stick" type="Button" parent="Interface/VBoxContainer/SettingsContainer/Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "STICK"
+
+[node name="Gyro" type="Button" parent="Interface/VBoxContainer/SettingsContainer/Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "GYRO"
+
+[node name="Video" type="Button" parent="Interface/VBoxContainer/SettingsContainer/Tabs"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "VIDEO"
+
+[node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("turnrate", "deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
+visible = false
+layout_mode = 2
+script = ExtResource("6_tw3kd")
+turnrate = NodePath("VBoxContainer/Turnrate")
+deadzone = NodePath("VBoxContainer/Deadzone")
+axialDeadzone = NodePath("VBoxContainer/AxialDeadzone")
+verticalSensitivity = NodePath("VBoxContainer/VerticalSensitivity")
+curve = NodePath("VBoxContainer/Curve")
+plot = NodePath("VBoxContainer/Curve/Plot")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings"]
+layout_mode = 2
+
+[node name="Turnrate" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " °/s"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate"]
+layout_mode = 2
+text = "Turn rate"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 120.0
+max_value = 1440.0
+value = 360.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "360°/s"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="VerticalSensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " %"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity"]
+layout_mode = 2
+text = "Vertical sensitivity"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 10.0
+max_value = 200.0
+value = 67.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "67%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="Deadzone" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " %"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone"]
+layout_mode = 2
+text = "Deadzone"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+value = 10.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "10%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="AxialDeadzone" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " %"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone"]
+layout_mode = 2
+text = "Axial deadzone"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 50.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "0%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="Curve" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " "
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve"]
+layout_mode = 2
+text = "Curve"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -10.0
+max_value = 10.0
+step = 0.1
+page = 1.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "0%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="Plot" type="Control" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve"]
+custom_minimum_size = Vector2(320, 320)
+layout_mode = 2
+script = ExtResource("8_gd4vy")
+
+[node name="GyroSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("sensitivity", "vertSensitivity", "yawRollMix", "minThreshold", "precisionThreshold", "activationMode", "gyroRatchet", "gyroOrientation", "flickStickEnabled", "flickStickSettingsUI", "flickThreshold", "flickTime", "snapping")]
+layout_mode = 2
+script = ExtResource("7_gd4vy")
+sensitivity = NodePath("VBoxContainer/Sensitivity")
+vertSensitivity = NodePath("VBoxContainer/VertSensitivity")
+yawRollMix = NodePath("VBoxContainer/YawRollMix")
+minThreshold = NodePath("VBoxContainer/MinThreshold")
+precisionThreshold = NodePath("VBoxContainer/PrecisionThreshold")
+activationMode = NodePath("VBoxContainer/ActivationMode/OptionButton")
+gyroRatchet = NodePath("VBoxContainer/GyroRatchet/OptionButton")
+gyroOrientation = NodePath("VBoxContainer/GyroOrientation/OptionButton")
+flickStickEnabled = NodePath("VBoxContainer/FlickStick/HBoxContainer/CheckButton")
+flickStickSettingsUI = NodePath("VBoxContainer/FlickStick/FlickStickSettings")
+flickThreshold = NodePath("VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold")
+flickTime = NodePath("VBoxContainer/FlickStick/FlickStickSettings/FlickTime")
+snapping = NodePath("VBoxContainer/FlickStick/FlickStickSettings/Snapping/OptionButton")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Sensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = "x"
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity"]
+layout_mode = 2
+text = "Sensitivity (Real World Scale)"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 50.0
+step = 0.1
+value = 6.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "6.0"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="VertSensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " %"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity"]
+layout_mode = 2
+text = "Vertical Sensitivity Scale"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 10.0
+max_value = 200.0
+value = 67.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "67%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="ActivationMode" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/ActivationMode"]
+layout_mode = 2
+text = "Activation mode"
+
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/ActivationMode"]
+layout_mode = 2
+alignment = 1
+selected = 0
+item_count = 4
+popup/item_0/text = "Always on"
+popup/item_0/id = 0
+popup/item_1/text = "Always off"
+popup/item_1/id = 1
+popup/item_2/text = "When aiming"
+popup/item_2/id = 2
+popup/item_3/text = "Toggle"
+popup/item_3/id = 3
+
+[node name="GyroRatchet" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroRatchet"]
+layout_mode = 2
+text = "Ratchet"
+
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroRatchet"]
+layout_mode = 2
+alignment = 1
+selected = 0
+item_count = 2
+popup/item_0/text = "Touchpad"
+popup/item_0/id = 0
+popup/item_1/text = "Button"
+popup/item_1/id = 1
+
+[node name="GyroOrientation" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroOrientation"]
+layout_mode = 2
+text = "Gyro Orientation"
+
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroOrientation"]
+layout_mode = 2
+alignment = 1
+selected = 4
+allow_reselect = true
+item_count = 5
+popup/item_0/text = "Yaw"
+popup/item_0/id = 0
+popup/item_1/text = "Roll"
+popup/item_1/id = 1
+popup/item_2/text = "Yaw/Roll Mix"
+popup/item_2/id = 2
+popup/item_3/text = "Player Space"
+popup/item_3/id = 3
+popup/item_4/text = "World Space"
+popup/item_4/id = 4
+
+[node name="YawRollMix" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " %"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix"]
+layout_mode = 2
+text = "Yaw-Roll mix"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 50.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "50%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="MinThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " °/s"
+precision = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold"]
+layout_mode = 2
+text = "Deadzone"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.12
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "0.12°/s"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="PrecisionThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = " °/s"
+precision = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold"]
+layout_mode = 2
+text = "Precision threshold"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 5.0
+step = 0.01
+value = 0.75
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "0.75°/s"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="HSeparator" type="HSeparator" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+layout_mode = 2
+
+[node name="FlickStick" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Flick Stick"
+
+[node name="CheckButton" type="CheckButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/HBoxContainer"]
+layout_mode = 2
+
+[node name="FlickStickSettings" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick"]
+layout_mode = 2
+
+[node name="FlickThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = "%"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold"]
+layout_mode = 2
+text = "Flick Threshold"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 90.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "90%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="FlickTime" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = "ms"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime"]
+layout_mode = 2
+text = "Flick Time"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 100.0
+max_value = 5000.0
+step = 100.0
+value = 100.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "100 ms"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="Snapping" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/Snapping"]
+layout_mode = 2
+text = "Snapping"
+
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/Snapping"]
+layout_mode = 2
+alignment = 1
+selected = 0
+item_count = 6
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_0/separator = true
+popup/item_1/text = "Forward Only"
+popup/item_1/id = 1
+popup/item_2/text = "Two"
+popup/item_2/id = 2
+popup/item_3/text = "Four"
+popup/item_3/id = 3
+popup/item_4/text = "Six"
+popup/item_4/id = 4
+popup/item_5/text = "Eight"
+popup/item_5/id = 5
+
+[node name="SnappingForwardDeadzone" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = "°"
+precision = 0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone"]
+layout_mode = 2
+text = "Snapping Forward Deadzone"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 45.0
+value = 7.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "7°"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="VideoSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer"]
+layout_mode = 2
+script = ExtResource("9_qw60f")
