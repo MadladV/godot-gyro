@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://cmfb8cjkl5rih" path="res://CameraController.cs" id="1_28aoi"]
 [ext_resource type="Texture2D" uid="uid://qpovrtey7482" path="res://assets/Orange/texture_02.png" id="1_pq8q7"]
 [ext_resource type="Script" uid="uid://3sn3actp5c4c" path="res://SettingsInterface.cs" id="3_28aoi"]
+[ext_resource type="Texture2D" uid="uid://7x3xlsboqcs5" path="res://assets/kenney_crosshair-pack/crosshair179.png" id="3_gd4vy"]
 [ext_resource type="Script" uid="uid://jax4fyndlu5v" path="res://SettingSlider.cs" id="4_28aoi"]
 [ext_resource type="Texture2D" uid="uid://ur41xk1wbc0d" path="res://assets/input_prompts/keyboard_escape.png" id="4_vyht1"]
 [ext_resource type="Texture2D" uid="uid://c0o6owyd4q1kn" path="res://assets/input_prompts/keyboard_escape_outline.png" id="5_bf3um"]
-[ext_resource type="Texture2D" uid="uid://dejc6mnfkor3l" path="res://assets/kenney_crosshair-pack/Outline Retina/crosshair180.png" id="5_jnlp7"]
 [ext_resource type="Script" uid="uid://bvja3o46menkr" path="res://StickSettingsMenu.cs" id="6_tw3kd"]
 [ext_resource type="Script" uid="uid://d24wm1j8wwq63" path="res://GyroSettingsMenu.cs" id="7_gd4vy"]
 [ext_resource type="Script" uid="uid://caw78ecfletkc" path="res://Plot.cs" id="8_gd4vy"]
@@ -18,10 +18,12 @@ uv1_triplanar = true
 
 [node name="root" type="Node3D"]
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("calibrationButton", "calibrationLabel")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 fov = 90.0
 script = ExtResource("1_28aoi")
+calibrationButton = NodePath("../Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Calibrate")
+calibrationLabel = NodePath("../Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Label")
 
 [node name="WorldGeometry" type="Node3D" parent="."]
 
@@ -51,7 +53,7 @@ offset_right = 72.0
 offset_bottom = 72.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_jnlp7")
+texture = ExtResource("3_gd4vy")
 
 [node name="Interface" type="Control" parent="." node_paths=PackedStringArray("stickTab", "gyroTab", "videoTab", "stickSettings", "gyroSettings", "videoSettings", "settingsContainer", "escRect", "escOutlineRect")]
 layout_mode = 3
@@ -301,6 +303,19 @@ snapping = NodePath("VBoxContainer/FlickStick/FlickStickSettings/Snapping/Option
 layout_mode = 2
 theme_override_constants/separation = 16
 
+[node name="Calibrate" type="Button" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+layout_mode = 2
+text = "CALIBRATE"
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+custom_minimum_size = Vector2(320, 48)
+layout_mode = 2
+text = "Please calibrate the controller if you are experiencing drift."
+autowrap_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+layout_mode = 2
+
 [node name="Sensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
@@ -326,7 +341,7 @@ value = 6.0
 [node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-text = "6.0"
+text = "6.0x"
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
@@ -474,12 +489,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 max_value = 1.0
 step = 0.01
-value = 0.12
+value = 0.36
 
 [node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-text = "0.12°/s"
+text = "0.36°/s"
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
@@ -534,6 +549,7 @@ text = "Flick Stick"
 layout_mode = 2
 
 [node name="FlickStickSettings" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick"]
+visible = false
 layout_mode = 2
 
 [node name="FlickThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]

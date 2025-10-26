@@ -1,6 +1,6 @@
 using Godot;
 using GodotGyro;
-using System;
+using GyroHelpers;
 
 public partial class GyroSettingsMenu : PanelContainer
 {
@@ -54,9 +54,17 @@ public partial class GyroSettingsMenu : PanelContainer
             Singleton<GyroSettings>.Instance.FlickstickEnabled = value;
             flickStickSettingsUI.Visible = value;
         };
-        flickThreshold.OnValueChanged += (_, value) => { };
-        flickTime.OnValueChanged += (_, value) => { };
-        snapping.ItemSelected += (value) => {
+        flickThreshold.OnValueChanged += (_, value) =>
+        {   
+            Singleton<FlickStick>.Instance.FlickThreshold = value;
+        };
+        flickTime.OnValueChanged += (_, value) =>
+        {
+            Singleton<FlickStick>.Instance.FlickTime = value;
+        };
+        snapping.ItemSelected += (value) =>
+        {
+            Singleton<FlickStick>.Instance.Snapping = (FlickSnapping)value;
         };
     }
 }
