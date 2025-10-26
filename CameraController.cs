@@ -6,17 +6,28 @@ using GyroHelpers.GyroSpaces;
 using SDL3;
 public partial class CameraController : Camera3D
 {
+    public event EventHandler TouchpadStateChanged;
     [Export] private Button calibrationButton;
     [Export] private Label calibrationLabel;
     private readonly GyroInput gyroInput = new();
-    private readonly GyroProcessor gyroProcessor = new();
+    private GyroProcessor GyroProcessor => Singleton<GyroProcessor>.Instance;
 
-    private bool IsTouchpadDown { get; set; } = false;
+    private bool isTouchpadDown;
+    private bool IsTouchpadDown
+    {
+        get => isTouchpadDown;
+        set
+        {
+            if (isTouchpadDown == value) return;
+            isTouchpadDown = value;
+            TouchpadStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
 
     public override void _Ready()
     {
         SDL.Init(SDL.InitFlags.Gamepad);
-        gyroProcessor.GyroSpace = new WorldGyroSpace();
+        GyroProcessor.GyroSpace = new WorldGyroSpace();
 
         // TODO: Make this prettier.
         calibrationButton.Pressed += () =>
@@ -39,8 +50,27 @@ public partial class CameraController : Camera3D
                 calibrationLabel.Text = "Please calibrate the controller if you are experiencing drift.";
             };
         };
+        TouchpadStateChanged += (_, _) =>
+        {
+            if (Singleton<GyroSettings>.Instance.Ratchet == GyroRatchet.TOUCHPAD)
+            {
+                gyroToggleState = !gyroToggleState;
+            }
+        };
     }
-    
+
+    private float adsAlpha;
+
+    private float AdsAlpha
+    {
+        get => adsAlpha;
+        set => adsAlpha = Math.Clamp(value, 0f, 1f);
+    }
+
+    private float hipFov = 90f;
+    private float aimFov = 60f;
+    private bool gyroToggleState = false;
+    private bool isGyroActive = true;
     public override void _Process(double delta)
     {
         gyroInput.Begin();
@@ -79,12 +109,50 @@ public partial class CameraController : Camera3D
         }
         
         // Gyro input
-        var angleDelta = gyroProcessor.Update(gyroInput.Gyro, (float)delta);
+        var angleDelta = GyroProcessor.Update(gyroInput.Gyro, (float)delta);
         angleDelta = angleDelta with { Y = angleDelta.Y * Singleton<GyroSettings>.Instance.VerticalSensMul };
         angleDelta *= Singleton<GyroSettings>.Instance.Sensitivity;
         // TODO: Gyro precision logic
         
-        if (!IsTouchpadDown)
+        // Gyro Activation + Ratchet modes
+        if (Singleton<GyroSettings>.Instance.Ratchet == GyroRatchet.BUTTON && Input.IsActionJustPressed("pauseGyro"))
+        {
+            gyroToggleState = !gyroToggleState;
+        }
+        
+        switch (Singleton<GyroSettings>.Instance.ActivationMode)
+        {
+            case GyroActivationMode.ALWAYS_ON:
+                switch (Singleton<GyroSettings>.Instance.Ratchet)
+                {
+                    case GyroRatchet.TOUCHPAD:
+                        isGyroActive = !IsTouchpadDown;
+                        break;
+                    case GyroRatchet.BUTTON:
+                        isGyroActive = !Input.IsActionPressed("pauseGyro");
+                        break;
+                }
+                break;
+            case GyroActivationMode.ALWAYS_OFF:
+                switch (Singleton<GyroSettings>.Instance.Ratchet)
+                {
+                    case GyroRatchet.TOUCHPAD:
+                        isGyroActive = IsTouchpadDown;
+                        break;
+                    case GyroRatchet.BUTTON:
+                        isGyroActive = Input.IsActionPressed("pauseGyro");
+                        break;
+                }
+                break;
+            case GyroActivationMode.WHEN_AIMING:
+                isGyroActive = Input.IsActionPressed("aim");
+                break;
+            case GyroActivationMode.TOGGLE:
+                isGyroActive = gyroToggleState;
+                break;
+        }
+        
+        if (isGyroActive)
         {
             // Gyro velocity in radians per second
             var gyroSpeed = angleDelta.Length() / (float)delta; 
@@ -103,7 +171,7 @@ public partial class CameraController : Camera3D
                 angleDelta *= precision;
             }
             Rotation += (new Quaternion(Vector3.Up, angleDelta.Y) *
-                         new Quaternion(Vector3.Right, angleDelta.X)).GetEuler();
+                         new Quaternion(Vector3.Right, angleDelta.X)).GetEuler() * AimSensitivityMultiplier(Fov);
         }
         
         // TODO: Add an orientation gizmo
@@ -125,7 +193,7 @@ public partial class CameraController : Camera3D
             output *= Singleton<ControllerSettings>.Instance.Turnrate * new Vector2(1f, Singleton<ControllerSettings>.Instance.VertSensitivity); // Apply sensitivity
             
             // Power curve
-            Rotation -= (new Quaternion(Vector3.Up, output.X) * new Quaternion(Vector3.Right, output.Y)).GetEuler();
+            Rotation -= (new Quaternion(Vector3.Up, output.X) * new Quaternion(Vector3.Right, output.Y)).GetEuler() * AimSensitivityMultiplier(Fov);
         }
         
         // Flick Stick
@@ -133,6 +201,9 @@ public partial class CameraController : Camera3D
         {
             Rotation = Rotation with { Y = Rotation.Y + Singleton<FlickStick>.Instance.Update(new System.Numerics.Vector2(rightStick.X, rightStick.Y), (float)delta) };
         }
+
+        AdsAlpha += (float)delta * (Input.IsActionPressed("aim") ? 3f : -3f);
+        Fov = float.Lerp(90f, 60f, AdsAlpha);
     }
 
     private static unsafe System.Numerics.Vector3 ParseGSensorData(SDL.GamepadSensorEvent @event)
@@ -143,6 +214,14 @@ public partial class CameraController : Camera3D
             @event.Data[2]
             );
         return result;
+    }
+
+    private float AimSensitivityMultiplier(float currentFov)
+    {
+        var hip = Mathf.DegToRad(hipFov * 0.5f);
+        var current = Mathf.DegToRad(currentFov * 0.5f);
+
+        return (float)Math.Pow(Mathf.Tan(current) / Mathf.Tan(hip), 1.78f); // Uniform Aiming for 16:9 aspect ratio
     }
 }
 

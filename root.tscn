@@ -287,7 +287,7 @@ layout_mode = 2
 script = ExtResource("7_gd4vy")
 sensitivity = NodePath("VBoxContainer/Sensitivity")
 vertSensitivity = NodePath("VBoxContainer/VertSensitivity")
-yawRollMix = NodePath("VBoxContainer/YawRollMix")
+yawRollMix = NodePath("")
 minThreshold = NodePath("VBoxContainer/MinThreshold")
 precisionThreshold = NodePath("VBoxContainer/PrecisionThreshold")
 activationMode = NodePath("VBoxContainer/ActivationMode/OptionButton")
@@ -426,48 +426,17 @@ text = "Gyro Orientation"
 [node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroOrientation"]
 layout_mode = 2
 alignment = 1
-selected = 4
+selected = 3
 allow_reselect = true
-item_count = 5
+item_count = 4
 popup/item_0/text = "Yaw"
 popup/item_0/id = 0
 popup/item_1/text = "Roll"
 popup/item_1/id = 1
-popup/item_2/text = "Yaw/Roll Mix"
-popup/item_2/id = 2
-popup/item_3/text = "Player Space"
-popup/item_3/id = 3
-popup/item_4/text = "World Space"
-popup/item_4/id = 4
-
-[node name="YawRollMix" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
-layout_mode = 2
-script = ExtResource("4_28aoi")
-hslider = NodePath("HBoxContainer/HSlider")
-label = NodePath("HBoxContainer/Label")
-suffix = " %"
-precision = 0
-
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix"]
-layout_mode = 2
-text = "Yaw-Roll mix"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix"]
-layout_mode = 2
-
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-value = 50.0
-
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/YawRollMix/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-text = "50%"
-horizontal_alignment = 1
-vertical_alignment = 1
-clip_text = true
-text_overrun_behavior = 1
+popup/item_2/text = "Player Space"
+popup/item_2/id = 3
+popup/item_3/text = "World Space"
+popup/item_3/id = 4
 
 [node name="MinThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
