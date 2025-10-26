@@ -37,17 +37,15 @@ public partial class CameraController : Camera3D
             {
                 gyroInput.Calibrating = true;
                 calibrationLabel.Text = "Calibrating...";
-            };
-            
-            GetTree().CreateTimer(5f).Timeout += () =>
-            {
-                gyroInput.Calibrating = false;
-                calibrationLabel.Text = "Calibration finished!";
-            };
-            
-            GetTree().CreateTimer(3f).Timeout += () =>
-            {
-                calibrationLabel.Text = "Please calibrate the controller if you are experiencing drift.";
+                GetTree().CreateTimer(5f).Timeout += () =>
+                {
+                    gyroInput.Calibrating = false;
+                    calibrationLabel.Text = "Calibration finished!";
+                    GetTree().CreateTimer(3f).Timeout += () =>
+                    {
+                        calibrationLabel.Text = "Please calibrate the controller if you are experiencing drift.";
+                    };
+                };
             };
         };
         TouchpadStateChanged += (_, _) =>
@@ -163,7 +161,6 @@ public partial class CameraController : Camera3D
             // threshold for inputs to be slowed down in radians per second (default 0.75°/s)
             var precisionThreshold = Singleton<GyroSettings>.Instance.PrecisionThreshold * Mathf.Pi / 180f; 
             
-            if (gyroSpeed < minThreshold) return; 
             if (gyroSpeed < precisionThreshold)
             {
                 // linear interpolation for gyro velocities between deadzone and precision threshold
