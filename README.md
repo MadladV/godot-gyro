@@ -10,4 +10,6 @@ Demo of Gyro Aim (Motion Controls) in Godot 4.5 based on SDL3 and work by Jibb S
 
 [NaokoAF (Nao) · GitHub](https://github.com/NaokoAF)
 
+[Kenney](https://kenney.nl/)
+
 
