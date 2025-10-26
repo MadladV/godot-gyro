@@ -6,3 +6,4 @@
 /assets/
 .editorconfig
 *.uid
+*.old
