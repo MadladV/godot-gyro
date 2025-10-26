@@ -1,11 +1,13 @@
+using System;
 using Godot;
 using GodotGyro;
 using GyroHelpers;
+using GyroHelpers.GyroSpaces;
 
 public partial class GyroSettingsMenu : PanelContainer
 {
     [ExportGroup("Motion controls")]
-    [Export] private SettingSlider sensitivity, vertSensitivity, yawRollMix, minThreshold, precisionThreshold;
+    [Export] private SettingSlider sensitivity, vertSensitivity, minThreshold, precisionThreshold;
     [Export] private OptionButton activationMode, gyroRatchet, gyroOrientation;
     [ExportGroup("Flick Stick")]
     [Export] private CheckButton flickStickEnabled;
@@ -34,10 +36,21 @@ public partial class GyroSettingsMenu : PanelContainer
         gyroOrientation.ItemSelected += (value) =>
         {
             Singleton<GyroSettings>.Instance.Orientation = (GyroOrientation)value;
-        };
-        yawRollMix.OnValueChanged += (_, value) =>
-        {
-            Singleton<GyroSettings>.Instance.YawRollMix = value;
+            switch ((GyroOrientation)value)
+            {
+                case GyroOrientation.YAW:
+                    Singleton<GyroProcessor>.Instance.GyroSpace = new LocalGyroSpace(GyroAxis.Yaw);
+                    break;
+                case GyroOrientation.ROLL:
+                    Singleton<GyroProcessor>.Instance.GyroSpace = new LocalGyroSpace(GyroAxis.Roll);
+                    break;
+                case GyroOrientation.PLAYERSPACE:
+                    Singleton<GyroProcessor>.Instance.GyroSpace = new PlayerLeanGyroSpace();
+                    break;
+                case GyroOrientation.WORLDSPACE:
+                    Singleton<GyroProcessor>.Instance.GyroSpace = new WorldGyroSpace();
+                    break;
+            }
         };
         minThreshold.OnValueChanged += (_, value) =>
         {
