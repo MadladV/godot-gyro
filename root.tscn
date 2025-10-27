@@ -1,16 +1,16 @@
 [gd_scene load_steps=13 format=3 uid="uid://b3usl3s80gsfv"]
 
-[ext_resource type="Script" uid="uid://cmfb8cjkl5rih" path="res://CameraController.cs" id="1_28aoi"]
+[ext_resource type="Script" uid="uid://cmfb8cjkl5rih" path="res://scripts/CameraController.cs" id="1_28aoi"]
 [ext_resource type="Texture2D" uid="uid://qpovrtey7482" path="res://assets/Orange/texture_02.png" id="1_pq8q7"]
-[ext_resource type="Script" uid="uid://3sn3actp5c4c" path="res://SettingsInterface.cs" id="3_28aoi"]
+[ext_resource type="Script" uid="uid://3sn3actp5c4c" path="res://scripts/ui/SettingsInterface.cs" id="3_28aoi"]
 [ext_resource type="Texture2D" uid="uid://7x3xlsboqcs5" path="res://assets/kenney_crosshair-pack/crosshair179.png" id="3_gd4vy"]
-[ext_resource type="Script" uid="uid://jax4fyndlu5v" path="res://SettingSlider.cs" id="4_28aoi"]
+[ext_resource type="Script" uid="uid://jax4fyndlu5v" path="res://scripts/ui/SettingSlider.cs" id="4_28aoi"]
 [ext_resource type="Texture2D" uid="uid://ur41xk1wbc0d" path="res://assets/input_prompts/keyboard_escape.png" id="4_vyht1"]
 [ext_resource type="Texture2D" uid="uid://c0o6owyd4q1kn" path="res://assets/input_prompts/keyboard_escape_outline.png" id="5_bf3um"]
-[ext_resource type="Script" uid="uid://bvja3o46menkr" path="res://StickSettingsMenu.cs" id="6_tw3kd"]
-[ext_resource type="Script" uid="uid://d24wm1j8wwq63" path="res://GyroSettingsMenu.cs" id="7_gd4vy"]
-[ext_resource type="Script" uid="uid://caw78ecfletkc" path="res://Plot.cs" id="8_gd4vy"]
-[ext_resource type="Script" uid="uid://cibyh1bmoy3kh" path="res://VideoSettingsMenu.cs" id="9_qw60f"]
+[ext_resource type="Script" uid="uid://bvja3o46menkr" path="res://scripts/ui/StickSettingsMenu.cs" id="6_tw3kd"]
+[ext_resource type="Script" uid="uid://d24wm1j8wwq63" path="res://scripts/ui/GyroSettingsMenu.cs" id="7_gd4vy"]
+[ext_resource type="Script" uid="uid://caw78ecfletkc" path="res://scripts/ui/Plot.cs" id="8_gd4vy"]
+[ext_resource type="Script" uid="uid://cibyh1bmoy3kh" path="res://scripts/ui/VideoSettingsMenu.cs" id="9_qw60f"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pyidc"]
 albedo_texture = ExtResource("1_pq8q7")
@@ -111,11 +111,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "VIDEO"
 
-[node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("turnrate", "deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
+[node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
 visible = false
 layout_mode = 2
 script = ExtResource("6_tw3kd")
-turnrate = NodePath("VBoxContainer/Turnrate")
 deadzone = NodePath("VBoxContainer/Deadzone")
 axialDeadzone = NodePath("VBoxContainer/AxialDeadzone")
 verticalSensitivity = NodePath("VBoxContainer/VerticalSensitivity")
@@ -282,12 +281,11 @@ custom_minimum_size = Vector2(320, 320)
 layout_mode = 2
 script = ExtResource("8_gd4vy")
 
-[node name="GyroSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("sensitivity", "vertSensitivity", "yawRollMix", "minThreshold", "precisionThreshold", "activationMode", "gyroRatchet", "gyroOrientation", "flickStickEnabled", "flickStickSettingsUI", "flickThreshold", "flickTime", "snapping")]
+[node name="GyroSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("sensitivity", "vertSensitivity", "minThreshold", "precisionThreshold", "activationMode", "gyroRatchet", "gyroOrientation", "flickStickEnabled", "flickStickSettingsUI", "flickThreshold", "flickTime", "snapping")]
 layout_mode = 2
 script = ExtResource("7_gd4vy")
 sensitivity = NodePath("VBoxContainer/Sensitivity")
 vertSensitivity = NodePath("VBoxContainer/VertSensitivity")
-yawRollMix = NodePath("")
 minThreshold = NodePath("VBoxContainer/MinThreshold")
 precisionThreshold = NodePath("VBoxContainer/PrecisionThreshold")
 activationMode = NodePath("VBoxContainer/ActivationMode/OptionButton")

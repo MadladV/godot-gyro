@@ -15,10 +15,6 @@ run/main_scene="uid://b3usl3s80gsfv"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-Bootstrap="*res://Bootstrap.cs"
-
 [debug_draw_3d]
 
 settings/addon_root_folder="res://addons/debug_draw_3d"
