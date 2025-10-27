@@ -1,8 +1,11 @@
 # Godot 4+ specific ignores
 .godot/
+*.import
 .idea/
 /android/
 /addons/
 .editorconfig
 *.uid
+*.old
+*.user
 *.old
