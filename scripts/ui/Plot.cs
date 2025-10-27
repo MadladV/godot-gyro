@@ -1,18 +1,17 @@
 using Godot;
-using System;
-using GodotGyro;
 
+namespace GodotGyro;
 public partial class Plot : Control
 {
-    private static int resolution = 50;
+    private const int Resolution = 50;
     private Vector2[] points;
 
     public override void _Ready()
     {
-        points =  new Vector2[resolution + 1];
-        for (int i = 0; i <= resolution; i++)
+        points =  new Vector2[Resolution + 1];
+        for (int i = 0; i <= Resolution; i++)
         {
-            points[i] = new Vector2(i, i) / resolution;
+            points[i] = new Vector2(i, i) / Resolution;
         }
         Update();
     }
@@ -30,10 +29,10 @@ public partial class Plot : Control
 
     private Vector2[] ScaledPoints()
     {
-        var scaledPoints = new Vector2[points.Length];
+        Vector2[] scaledPoints = new Vector2[points.Length];
         for (int i = 0; i < points.Length; i++)
         {
-            var foo = points[i];
+            Vector2 foo = points[i];
             foo = foo with { Y = Mathf.Ease(foo.Y, Singleton<ControllerSettings>.Instance.Curve) };
             foo = foo with { Y = 1f - foo.Y }; // Convert to 0,0 in bottom-left instead of top-left
             scaledPoints[i] = foo * new Vector2(320, 320);

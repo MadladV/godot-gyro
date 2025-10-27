@@ -1,9 +1,10 @@
 using System;
 using Godot;
-using GodotGyro;
 using GyroHelpers;
 using GyroHelpers.GyroSpaces;
 using SDL3;
+
+namespace GodotGyro;
 public partial class CameraController : Camera3D
 {
     public event EventHandler TouchpadStateChanged;
@@ -20,7 +21,7 @@ public partial class CameraController : Camera3D
         {
             if (isTouchpadDown == value) return;
             isTouchpadDown = value;
-            TouchpadStateChanged?.Invoke(this, EventArgs.Empty);
+            if (IsTouchpadDown) TouchpadStateChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -67,25 +68,25 @@ public partial class CameraController : Camera3D
 
     private float hipFov = 90f;
     private float aimFov = 60f;
-    private bool gyroToggleState = false;
+    private bool gyroToggleState;
     private bool isGyroActive = true;
     public override void _Process(double delta)
     {
         gyroInput.Begin();
-        while (SDL.PollEvent(out var @event))
+        while (SDL.PollEvent(out SDL.Event @event))
         {
             switch ((SDL.EventType)@event.Type)
             {
                 case SDL.EventType.GamepadAdded:
                     // TODO: Support multiple devices
-                    var gamepad = SDL.OpenGamepad(@event.GDevice.Which);
+                    IntPtr gamepad = SDL.OpenGamepad(@event.GDevice.Which);
                     GD.Print($"Added gamepad: {SDL.GetGamepadName(gamepad)} : {gamepad}");
                     SDL.SetGamepadSensorEnabled(gamepad, SDL.SensorType.Gyro, true);
                     SDL.SetGamepadSensorEnabled(gamepad, SDL.SensorType.Accel, true);
                     break;
                 case SDL.EventType.GamepadSensorUpdate:
-                    var timestamp = @event.GSensor.Timestamp;
-                    var data = ParseGSensorData(@event.GSensor);
+                    ulong timestamp = @event.GSensor.Timestamp;
+                    System.Numerics.Vector3 data = ParseGSensorData(@event.GSensor);
                     
                     switch ((SDL.SensorType)@event.GSensor.Sensor)
                     {
@@ -107,7 +108,7 @@ public partial class CameraController : Camera3D
         }
         
         // Gyro input
-        var angleDelta = GyroProcessor.Update(gyroInput.Gyro, (float)delta);
+        System.Numerics.Vector2 angleDelta = GyroProcessor.Update(gyroInput.Gyro, (float)delta);
         angleDelta = angleDelta with { Y = angleDelta.Y * Singleton<GyroSettings>.Instance.VerticalSensMul };
         angleDelta *= Singleton<GyroSettings>.Instance.Sensitivity;
         // TODO: Gyro precision logic
@@ -153,18 +154,18 @@ public partial class CameraController : Camera3D
         if (isGyroActive)
         {
             // Gyro velocity in radians per second
-            var gyroSpeed = angleDelta.Length() / (float)delta; 
+            float gyroSpeed = angleDelta.Length() / (float)delta; 
             
             // threshold for inputs to be ignored in radians per second (default 0.36°/s)
-            var minThreshold = Singleton<GyroSettings>.Instance.MinThreshold * Mathf.Pi / 180f; 
+            float minThreshold = Singleton<GyroSettings>.Instance.MinThreshold * Mathf.Pi / 180f; 
             
             // threshold for inputs to be slowed down in radians per second (default 0.75°/s)
-            var precisionThreshold = Singleton<GyroSettings>.Instance.PrecisionThreshold * Mathf.Pi / 180f; 
+            float precisionThreshold = Singleton<GyroSettings>.Instance.PrecisionThreshold * Mathf.Pi / 180f; 
             
             if (gyroSpeed < precisionThreshold)
             {
                 // linear interpolation for gyro velocities between deadzone and precision threshold
-                var precision = Mathf.Remap(gyroSpeed, minThreshold, precisionThreshold, 0f, 1f); 
+                float precision = Mathf.Remap(gyroSpeed, minThreshold, precisionThreshold, 0f, 1f); 
                 angleDelta *= precision;
             }
             Rotation += (new Quaternion(Vector3.Up, angleDelta.Y) *
@@ -174,27 +175,27 @@ public partial class CameraController : Camera3D
         // TODO: Add an orientation gizmo
         
         // Stick camera controller
-        var rightStick = new Vector2(Input.GetJoyAxis(0, JoyAxis.RightX), Input.GetJoyAxis(0, JoyAxis.RightY));
+        Vector2 rightStick = new Vector2(Input.GetJoyAxis(0, JoyAxis.RightX), Input.GetJoyAxis(0, JoyAxis.RightY));
         
-        if (rightStick.Length() >= Singleton<ControllerSettings>.Instance.Deadzone && !Singleton<GyroSettings>.Instance.FlickstickEnabled)
+        if (rightStick.Length() >= Singleton<ControllerSettings>.Instance.Deadzone && !Singleton<GyroSettings>.Instance.FlickStickEnabled)
         {
             // Axial deadzone
             if (Math.Abs(rightStick.X) < Singleton<ControllerSettings>.Instance.AxialDeadzone ||
                 Math.Abs(rightStick.Y) < Singleton<ControllerSettings>.Instance.AxialDeadzone) return;
             
-            var direction = rightStick.Normalized();
-            var length = rightStick.Length();
+            Vector2 direction = rightStick.Normalized();
+            float length = rightStick.Length();
             length = Mathf.Remap(length, Singleton<ControllerSettings>.Instance.Deadzone, 1f, 0f, 1f);
             length *= Mathf.Pi / 180f * (float)delta; // Convert to degrees per second
-            var output = direction * length;
-            output *= Singleton<ControllerSettings>.Instance.Turnrate * new Vector2(1f, Singleton<ControllerSettings>.Instance.VertSensitivity); // Apply sensitivity
+            Vector2 output = direction * length;
+            output *= Singleton<ControllerSettings>.Instance.TurnRate * new Vector2(1f, Singleton<ControllerSettings>.Instance.VerticalSensitivity); // Apply sensitivity
             
             // Power curve
             Rotation -= (new Quaternion(Vector3.Up, output.X) * new Quaternion(Vector3.Right, output.Y)).GetEuler() * AimSensitivityMultiplier(Fov);
         }
         
         // Flick Stick
-        if (Singleton<GyroSettings>.Instance.FlickstickEnabled)
+        if (Singleton<GyroSettings>.Instance.FlickStickEnabled)
         {
             Rotation = Rotation with { Y = Rotation.Y + Singleton<FlickStick>.Instance.Update(new System.Numerics.Vector2(rightStick.X, rightStick.Y), (float)delta) };
         }
@@ -205,7 +206,7 @@ public partial class CameraController : Camera3D
 
     private static unsafe System.Numerics.Vector3 ParseGSensorData(SDL.GamepadSensorEvent @event)
     {
-        var result = new System.Numerics.Vector3(
+        System.Numerics.Vector3 result = new System.Numerics.Vector3(
             @event.Data[0],
             @event.Data[1],
             @event.Data[2]
@@ -215,8 +216,8 @@ public partial class CameraController : Camera3D
 
     private float AimSensitivityMultiplier(float currentFov)
     {
-        var hip = Mathf.DegToRad(hipFov * 0.5f);
-        var current = Mathf.DegToRad(currentFov * 0.5f);
+        float hip = Mathf.DegToRad(hipFov * 0.5f);
+        float current = Mathf.DegToRad(currentFov * 0.5f);
 
         return (float)Math.Pow(Mathf.Tan(current) / Mathf.Tan(hip), 1.78f); // Uniform Aiming for 16:9 aspect ratio
     }

@@ -1,5 +1,6 @@
-using GodotGyro;
 using GyroHelpers;
+
+namespace GodotGyro;
 
 public enum GyroActivationMode
 {
@@ -41,7 +42,5 @@ public class GyroSettings
         }
     }
     public float PrecisionThreshold { get; set; } = 0.75f;
-    public GyroOrientation Orientation { get; set; } = GyroOrientation.WORLDSPACE;
-    public float YawRollMix { get; set; } = 0.5f;
-    public bool FlickstickEnabled { get; set; } = false;
+    public bool FlickStickEnabled { get; set; }
 }

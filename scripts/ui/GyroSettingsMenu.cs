@@ -1,9 +1,8 @@
-using System;
 using Godot;
-using GodotGyro;
 using GyroHelpers;
 using GyroHelpers.GyroSpaces;
 
+namespace GodotGyro;
 public partial class GyroSettingsMenu : PanelContainer
 {
     [ExportGroup("Motion controls")]
@@ -35,7 +34,6 @@ public partial class GyroSettingsMenu : PanelContainer
         };
         gyroOrientation.ItemSelected += (value) =>
         {
-            Singleton<GyroSettings>.Instance.Orientation = (GyroOrientation)value;
             switch ((GyroOrientation)value)
             {
                 case GyroOrientation.YAW:
@@ -64,7 +62,7 @@ public partial class GyroSettingsMenu : PanelContainer
         // Flick stick settings
         flickStickEnabled.Toggled += (value) =>
         {
-            Singleton<GyroSettings>.Instance.FlickstickEnabled = value;
+            Singleton<GyroSettings>.Instance.FlickStickEnabled = value;
             flickStickSettingsUI.Visible = value;
         };
         flickThreshold.OnValueChanged += (_, value) =>

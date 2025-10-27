@@ -1,21 +1,21 @@
 using Godot;
-using System;
-using GodotGyro;
+
+namespace GodotGyro;
 
 public partial class StickSettingsMenu : PanelContainer
 {
-    [Export] private SettingSlider turnrate, deadzone, axialDeadzone, verticalSensitivity, curve;
+    [Export] private SettingSlider turnRate, deadzone, axialDeadzone, verticalSensitivity, curve;
     [Export] private Plot plot;
 
     public override void _Ready()
     {
-        turnrate.OnValueChanged += (_, value) =>
+        turnRate.OnValueChanged += (_, value) =>
         {
-            Singleton<ControllerSettings>.Instance.Turnrate = value;
+            Singleton<ControllerSettings>.Instance.TurnRate = value;
         };
         verticalSensitivity.OnValueChanged += (_, value) =>
         {
-            Singleton<ControllerSettings>.Instance.VertSensitivity = value;
+            Singleton<ControllerSettings>.Instance.VerticalSensitivity = value;
         };
         deadzone.OnValueChanged += (_, value) =>
         {
@@ -29,7 +29,6 @@ public partial class StickSettingsMenu : PanelContainer
         {
             Singleton<ControllerSettings>.Instance.Curve = value;
             plot.Update();
-            //Mathf.Ease((0f - 1f), value);
         };
     }
 }

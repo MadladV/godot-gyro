@@ -1,14 +1,12 @@
 using Godot;
 
+namespace GodotGyro;
 public partial class SettingsInterface : Control
 {
     [Export] private Button stickTab, gyroTab, videoTab;
     [Export] private Control stickSettings, gyroSettings, videoSettings;
     [Export] private VBoxContainer settingsContainer;
     [Export] private TextureRect escRect, escOutlineRect;
-    
-    
-    public GyroSettings GyroSettings = new();
 
     public override void _Ready()
     {
