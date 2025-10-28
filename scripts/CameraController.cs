@@ -13,14 +13,14 @@ public partial class CameraController : Camera3D
     private readonly GyroInput gyroInput = new();
     private GyroProcessor GyroProcessor => Singleton<GyroProcessor>.Instance;
 
-    private bool isTouchpadDown;
+    private bool isTouchpadTouched;
     private bool IsTouchpadDown
     {
-        get => isTouchpadDown;
+        get => isTouchpadTouched;
         set
         {
-            if (isTouchpadDown == value) return;
-            isTouchpadDown = value;
+            if (isTouchpadTouched == value) return;
+            isTouchpadTouched = value;
             if (IsTouchpadDown) TouchpadStateChanged?.Invoke(this, EventArgs.Empty);
         }
     }

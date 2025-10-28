@@ -111,10 +111,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "VIDEO"
 
-[node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
+[node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("turnRate", "deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
 visible = false
 layout_mode = 2
 script = ExtResource("6_tw3kd")
+turnRate = NodePath("VBoxContainer/Turnrate")
 deadzone = NodePath("VBoxContainer/Deadzone")
 axialDeadzone = NodePath("VBoxContainer/AxialDeadzone")
 verticalSensitivity = NodePath("VBoxContainer/VerticalSensitivity")
