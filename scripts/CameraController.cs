@@ -8,11 +8,11 @@ namespace GodotGyro;
 public partial class CameraController : Camera3D
 {
     public event EventHandler TouchpadStateChanged;
-    [Export] private Button calibrationButton;
-    [Export] private Label calibrationLabel;
     private readonly GyroInput gyroInput = new();
     private GyroProcessor GyroProcessor => Singleton<GyroProcessor>.Instance;
 
+    // TODO: Clean this up and make it more readable. If I didn't know it was meant to track if Touchpad was just touched I wouldn't figure it out again
+    private bool isTouchpadJustTouched; // TODO: Implement
     private bool isTouchpadTouched;
     private bool IsTouchpadDown
     {
@@ -29,26 +29,7 @@ public partial class CameraController : Camera3D
     {
         SDL.Init(SDL.InitFlags.Gamepad);
         GyroProcessor.GyroSpace = new WorldGyroSpace();
-
-        // TODO: Make this prettier.
-        calibrationButton.Pressed += () =>
-        {
-            calibrationLabel.Text = "Put the controller down on a stable surface and wait for the process to finish.";
-            GetTree().CreateTimer(3f).Timeout += () =>
-            {
-                gyroInput.Calibrating = true;
-                calibrationLabel.Text = "Calibrating...";
-                GetTree().CreateTimer(5f).Timeout += () =>
-                {
-                    gyroInput.Calibrating = false;
-                    calibrationLabel.Text = "Calibration finished!";
-                    GetTree().CreateTimer(3f).Timeout += () =>
-                    {
-                        calibrationLabel.Text = "Please calibrate the controller if you are experiencing drift.";
-                    };
-                };
-            };
-        };
+        
         TouchpadStateChanged += (_, _) =>
         {
             if (Singleton<GyroSettings>.Instance.Ratchet == GyroRatchet.TOUCHPAD)
@@ -58,16 +39,7 @@ public partial class CameraController : Camera3D
         };
     }
 
-    private float adsAlpha;
 
-    private float AdsAlpha
-    {
-        get => adsAlpha;
-        set => adsAlpha = Math.Clamp(value, 0f, 1f);
-    }
-
-    private float hipFov = 90f;
-    private float aimFov = 60f;
     private bool gyroToggleState;
     private bool isGyroActive = true;
     public override void _Process(double delta)
@@ -172,27 +144,9 @@ public partial class CameraController : Camera3D
                          new Quaternion(Vector3.Right, angleDelta.X)).GetEuler() * AimSensitivityMultiplier(Fov);
         }
         
-        // TODO: Add an orientation gizmo
-        
+        Vector2 rightStick = new (Input.GetJoyAxis(0, JoyAxis.RightX), Input.GetJoyAxis(0, JoyAxis.RightY));
         // Stick camera controller
-        Vector2 rightStick = new Vector2(Input.GetJoyAxis(0, JoyAxis.RightX), Input.GetJoyAxis(0, JoyAxis.RightY));
-        
-        if (rightStick.Length() >= Singleton<ControllerSettings>.Instance.Deadzone && !Singleton<GyroSettings>.Instance.FlickStickEnabled)
-        {
-            // Axial deadzone
-            if (Math.Abs(rightStick.X) < Singleton<ControllerSettings>.Instance.AxialDeadzone ||
-                Math.Abs(rightStick.Y) < Singleton<ControllerSettings>.Instance.AxialDeadzone) return;
-            
-            Vector2 direction = rightStick.Normalized();
-            float length = rightStick.Length();
-            length = Mathf.Remap(length, Singleton<ControllerSettings>.Instance.Deadzone, 1f, 0f, 1f);
-            length *= Mathf.Pi / 180f * (float)delta; // Convert to degrees per second
-            Vector2 output = direction * length;
-            output *= Singleton<ControllerSettings>.Instance.TurnRate * new Vector2(1f, Singleton<ControllerSettings>.Instance.VerticalSensitivity); // Apply sensitivity
-            
-            // Power curve
-            Rotation -= (new Quaternion(Vector3.Up, output.X) * new Quaternion(Vector3.Right, output.Y)).GetEuler() * AimSensitivityMultiplier(Fov);
-        }
+        ProcessRightStick(rightStick, (float)delta);
         
         // Flick Stick
         if (Singleton<GyroSettings>.Instance.FlickStickEnabled)
@@ -206,14 +160,22 @@ public partial class CameraController : Camera3D
 
     private static unsafe System.Numerics.Vector3 ParseGSensorData(SDL.GamepadSensorEvent @event)
     {
-        System.Numerics.Vector3 result = new System.Numerics.Vector3(
+        System.Numerics.Vector3 result = new (
             @event.Data[0],
             @event.Data[1],
             @event.Data[2]
             );
         return result;
     }
-
+    
+    private float adsAlpha;
+    private float AdsAlpha
+    {
+        get => adsAlpha;
+        set => adsAlpha = Math.Clamp(value, 0f, 1f);
+    }
+    private float hipFov = 90f;
+    private float aimFov = 60f;
     private float AimSensitivityMultiplier(float currentFov)
     {
         float hip = Mathf.DegToRad(hipFov * 0.5f);
@@ -221,6 +183,24 @@ public partial class CameraController : Camera3D
 
         return (float)Math.Pow(Mathf.Tan(current) / Mathf.Tan(hip), 1.78f); // Uniform Aiming for 16:9 aspect ratio
     }
+    private void ProcessRightStick(Vector2 rightStick, float delta)
+    {
+        // Deadzone
+        if (!(rightStick.Length() >= Singleton<ControllerSettings>.Instance.Deadzone) ||
+            Singleton<GyroSettings>.Instance.FlickStickEnabled) return;
+        // Axial deadzone
+        if (Math.Abs(rightStick.X) < Singleton<ControllerSettings>.Instance.AxialDeadzone ||
+            Math.Abs(rightStick.Y) < Singleton<ControllerSettings>.Instance.AxialDeadzone) return;
+            
+        Vector2 direction = rightStick.Normalized();
+        float length = rightStick.Length();
+        length = Mathf.Remap(length, Singleton<ControllerSettings>.Instance.Deadzone, 1f, 0f, 1f);
+        length *= Mathf.Pi / 180f * delta; // Convert to degrees per second
+        Vector2 output = direction * length;
+        output *= Singleton<ControllerSettings>.Instance.TurnRate * new Vector2(1f, Singleton<ControllerSettings>.Instance.VerticalSensitivity); // Apply sensitivity
+            
+        // Power curve
+        Rotation -= (new Quaternion(Vector3.Up, output.X) * new Quaternion(Vector3.Right, output.Y)).GetEuler() * AimSensitivityMultiplier(Fov);
+    }
 }
-
 

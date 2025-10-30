@@ -18,12 +18,10 @@ uv1_triplanar = true
 
 [node name="root" type="Node3D"]
 
-[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("calibrationButton", "calibrationLabel")]
+[node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 fov = 90.0
 script = ExtResource("1_28aoi")
-calibrationButton = NodePath("../Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Calibrate")
-calibrationLabel = NodePath("../Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Label")
 
 [node name="WorldGeometry" type="Node3D" parent="."]
 
@@ -55,7 +53,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_gd4vy")
 
-[node name="Interface" type="Control" parent="." node_paths=PackedStringArray("stickTab", "gyroTab", "videoTab", "stickSettings", "gyroSettings", "videoSettings", "settingsContainer", "escRect", "escOutlineRect")]
+[node name="Interface" type="Control" parent="." node_paths=PackedStringArray("stickTab", "gyroTab", "videoTab", "calibrationButton", "stickSettings", "gyroSettings", "videoSettings", "settingsContainer", "escRect", "escOutlineRect", "connectedGamepadsDropdown", "calibrationLabel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,12 +64,15 @@ script = ExtResource("3_28aoi")
 stickTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Stick")
 gyroTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Gyro")
 videoTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Video")
+calibrationButton = NodePath("VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Calibrate")
 stickSettings = NodePath("VBoxContainer/SettingsContainer/StickSettings")
 gyroSettings = NodePath("VBoxContainer/SettingsContainer/GyroSettings")
 videoSettings = NodePath("VBoxContainer/SettingsContainer/VideoSettings")
 settingsContainer = NodePath("VBoxContainer/SettingsContainer")
 escRect = NodePath("VBoxContainer/EscButton")
 escOutlineRect = NodePath("VBoxContainer/EscButtonOutline")
+connectedGamepadsDropdown = NodePath("VBoxContainer/SettingsContainer/ControllerSelection/VBoxContainer/OptionButton")
+calibrationLabel = NodePath("VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Label")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Interface"]
 layout_mode = 0
@@ -110,6 +111,23 @@ text = "GYRO"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "VIDEO"
+
+[node name="ControllerSelection" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/ControllerSelection"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/ControllerSelection/VBoxContainer"]
+layout_mode = 2
+text = "Current gamepad"
+
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/ControllerSelection/VBoxContainer"]
+layout_mode = 2
+selected = 0
+item_count = 1
+popup/item_0/text = "Gamepad Name"
+popup/item_0/id = 0
 
 [node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("turnRate", "deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
 visible = false
