@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://b3usl3s80gsfv"]
 
-[ext_resource type="Script" uid="uid://cmfb8cjkl5rih" path="res://scripts/CameraController.cs" id="1_28aoi"]
+[ext_resource type="Script" uid="uid://cmfb8cjkl5rih" path="res://scripts/CameraController.cs" id="1_gd4vy"]
 [ext_resource type="Texture2D" uid="uid://qpovrtey7482" path="res://assets/Orange/texture_02.png" id="1_pq8q7"]
 [ext_resource type="Script" uid="uid://3sn3actp5c4c" path="res://scripts/ui/SettingsInterface.cs" id="3_28aoi"]
 [ext_resource type="Texture2D" uid="uid://7x3xlsboqcs5" path="res://assets/kenney_crosshair-pack/crosshair179.png" id="3_gd4vy"]
@@ -21,7 +21,7 @@ uv1_triplanar = true
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 fov = 90.0
-script = ExtResource("1_28aoi")
+script = ExtResource("1_gd4vy")
 
 [node name="WorldGeometry" type="Node3D" parent="."]
 
@@ -71,7 +71,7 @@ videoSettings = NodePath("VBoxContainer/SettingsContainer/VideoSettings")
 settingsContainer = NodePath("VBoxContainer/SettingsContainer")
 escRect = NodePath("VBoxContainer/EscButton")
 escOutlineRect = NodePath("VBoxContainer/EscButtonOutline")
-connectedGamepadsDropdown = NodePath("VBoxContainer/SettingsContainer/ControllerSelection/VBoxContainer/OptionButton")
+connectedGamepadsDropdown = NodePath("")
 calibrationLabel = NodePath("VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Label")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Interface"]
@@ -111,23 +111,6 @@ text = "GYRO"
 layout_mode = 2
 size_flags_horizontal = 3
 text = "VIDEO"
-
-[node name="ControllerSelection" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/ControllerSelection"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/ControllerSelection/VBoxContainer"]
-layout_mode = 2
-text = "Current gamepad"
-
-[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/ControllerSelection/VBoxContainer"]
-layout_mode = 2
-selected = 0
-item_count = 1
-popup/item_0/text = "Gamepad Name"
-popup/item_0/id = 0
 
 [node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("turnRate", "deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
 visible = false
@@ -285,11 +268,12 @@ min_value = -10.0
 max_value = 10.0
 step = 0.1
 page = 1.0
+value = 3.0
 
 [node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-text = "0%"
+text = "3.0"
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
