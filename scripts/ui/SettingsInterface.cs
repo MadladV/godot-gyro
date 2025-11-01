@@ -1,9 +1,7 @@
-using System;
 using Godot;
 using GyroHelpers;
-using SDL3;
 
-namespace GodotGyro;
+namespace GodotGyro.scripts.ui;
 public partial class SettingsInterface : Control
 {
     [Export] private Button stickTab, gyroTab, videoTab, calibrationButton;
@@ -12,7 +10,6 @@ public partial class SettingsInterface : Control
     [Export] private TextureRect escRect, escOutlineRect;
     [Export] private OptionButton connectedGamepadsDropdown;
     [Export] private Label calibrationLabel;
-
     
     public override void _Ready()
     {
@@ -38,11 +35,6 @@ public partial class SettingsInterface : Control
         };
 
         calibrationButton.Pressed += CalibrateGyro;
-        connectedGamepadsDropdown.ItemSelected += (value) =>
-        {
-            Singleton<GodotGyro>.Instance.SetCurrentGamepadId((uint)value);
-        };
-
     }
 
     public override void _Input(InputEvent @event)
@@ -57,41 +49,20 @@ public partial class SettingsInterface : Control
 
     private void CalibrateGyro()
     {
-        calibrationButton.Pressed += () =>
+        calibrationLabel.Text = "Put the controller down on a stable surface and wait for the process to finish.";
+        GetTree().CreateTimer(3f).Timeout += () =>
         {
-            calibrationLabel.Text = "Put the controller down on a stable surface and wait for the process to finish.";
-            GetTree().CreateTimer(3f).Timeout += () =>
+            Singleton<GyroInput>.Instance.Calibrating = true;
+            calibrationLabel.Text = "Calibrating...";
+            GetTree().CreateTimer(5f).Timeout += () =>
             {
-                Singleton<GyroInput>.Instance.Calibrating = true;
-                calibrationLabel.Text = "Calibrating...";
-                GetTree().CreateTimer(5f).Timeout += () =>
+                Singleton<GyroInput>.Instance.Calibrating = false;
+                calibrationLabel.Text = "Calibration finished!";
+                GetTree().CreateTimer(3f).Timeout += () =>
                 {
-                    Singleton<GyroInput>.Instance.Calibrating = false;
-                    calibrationLabel.Text = "Calibration finished!";
-                    GetTree().CreateTimer(3f).Timeout += () =>
-                    {
-                        calibrationLabel.Text = "Please calibrate the controller if you are experiencing drift.";
-                    };
+                    calibrationLabel.Text = "Please calibrate the controller if you are experiencing drift.";
                 };
             };
         };
-    }
-
-    private uint[] gamepads = [];
-    private void UpdateGamepadList()
-    {
-        gamepads = SDL.GetGamepads(out int _);
-        // Remove current optionss
-        for (int i = 0; i < connectedGamepadsDropdown.ItemCount; i++)
-        {
-            connectedGamepadsDropdown.RemoveItem(i);
-        }
-        // Populate the list again
-        foreach (uint gamepad in gamepads)
-        {
-            IntPtr pointer = SDL.OpenGamepad(gamepad);
-            connectedGamepadsDropdown.AddItem(SDL.GetGamepadName(pointer));
-        }
-        // TODO: Be smarter about it and use dict instead?
     }
 }
