@@ -12,7 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://dwrq8yeo04b7h" path="res://assets/input_prompts/playstation5_touchpad_outline.png" id="5_ub8w1"]
 [ext_resource type="Script" uid="uid://bvja3o46menkr" path="res://scripts/ui/StickSettingsMenu.cs" id="6_tw3kd"]
 [ext_resource type="Script" uid="uid://bnpmp4u4k30in" path="res://scripts/ui/ButtonState.cs" id="6_ub8w1"]
-[ext_resource type="Texture2D" uid="uid://ckc7cgkmch565" path="res://assets/input_prompts/playstation5_touchpad.png" id="7_ab83r"]
 [ext_resource type="Script" uid="uid://d24wm1j8wwq63" path="res://scripts/ui/GyroSettingsMenu.cs" id="7_gd4vy"]
 [ext_resource type="Texture2D" uid="uid://ddm8oc52p2r42" path="res://assets/input_prompts/playstation_button_color_triangle.png" id="7_ynlg5"]
 [ext_resource type="Texture2D" uid="uid://b6s7io2kna0jb" path="res://assets/input_prompts/playstation_button_color_square_outline.png" id="8_ab83r"]
@@ -27,6 +26,9 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pyidc"]
 albedo_texture = ExtResource("1_pq8q7")
 uv1_triplanar = true
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_po8fv"]
+load_path = "res://.godot/imported/playstation5_touchpad_press.png-a8b66cf12832e733f845c652ddc98741.ctex"
 
 [node name="root" type="Node3D"]
 
@@ -93,7 +95,7 @@ offset_right = 128.0
 offset_bottom = -72.0
 texture = ExtResource("5_ub8w1")
 script = ExtResource("6_ub8w1")
-textureActive = ExtResource("7_ab83r")
+textureActive = SubResource("CompressedTexture2D_po8fv")
 textureInactive = ExtResource("5_ub8w1")
 
 [node name="GyroPauseState" type="Label" parent="HUD/Control/Touchpad"]
