@@ -5,6 +5,9 @@ using SDL3;
 
 namespace GodotGyro;
 
+/// <summary>
+/// Class meant to provide simple and easy to use abstractions for SDL and GyroHelpers
+/// </summary>
 public class GodotGyro
 {
     private GyroInput GyroInput => Singleton<GyroInput>.Instance;
@@ -17,9 +20,9 @@ public class GodotGyro
 
     private bool touchpadToggleState = false;
     private bool touchpadHoldState = false;
-    private bool TouchpadHoldState { 
+    public bool TouchpadHoldState { 
         get => touchpadHoldState;
-        set
+        private set
         {
             if (touchpadHoldState == value) return;
             touchpadHoldState = value;
@@ -30,9 +33,14 @@ public class GodotGyro
         }
     }
     private bool buttonToggleState = false;
+    /// <summary>
+    /// Updates the Gyro and Accelerator sensor values. This should be done every frame.
+    /// Consumes <see cref="SDL.PollEvent"/> and calls <see cref="GyroInput.Begin"/> 
+    /// </summary>
     public void Update()
     {
         GyroInput.Begin();
+        // NOTE: Things go awry when more than a single SDL.PollEvent() instance is processed, could be worth moving it to another dedicated class and call related functions from within it
         while (SDL.PollEvent(out SDL.Event @event))
         {
             switch ((SDL.EventType)@event.Type)
@@ -70,6 +78,10 @@ public class GodotGyro
     }
     
     public bool IsAiming;
+    /// <summary>
+    /// Evaluates GyroSettings (Activation Mode and Ratchet) to determine whether the Gyro input is paused or not.
+    /// </summary>
+    /// <returns>True if the Gyroscope input should be ignored.</returns>
     public bool IsPaused()
     {
         if (Input.IsActionJustPressed("pauseGyro"))
@@ -112,6 +124,11 @@ public class GodotGyro
         return false;
     }
 
+    /// <summary>
+    /// Processes Gyro sensor data and applies user settings (Sensitivity, Thresholds)
+    /// </summary>
+    /// <param name="delta"></param>
+    /// <returns>Rotation delta in Euler angles (radians)</returns>
     public Vector3 ProcessGyro(float delta)
     {
         System.Numerics.Vector2 angleDelta = GyroProcessor.Update(GyroInput.Gyro, delta);
