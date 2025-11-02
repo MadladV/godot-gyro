@@ -745,6 +745,71 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="VideoSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer"]
+[node name="VideoSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("resolutionScale", "windowResolution", "displayMode", "applyButton")]
+visible = false
 layout_mode = 2
 script = ExtResource("9_qw60f")
+resolutionScale = NodePath("VBoxContainer/ResolutionScale")
+windowResolution = NodePath("VBoxContainer/Resolution")
+displayMode = NodePath("VBoxContainer/WindowMode")
+applyButton = NodePath("VBoxContainer/Button")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings"]
+layout_mode = 2
+
+[node name="ResolutionScale" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+layout_mode = 2
+script = ExtResource("4_28aoi")
+hslider = NodePath("HBoxContainer/HSlider")
+label = NodePath("HBoxContainer/Label")
+suffix = "%"
+precision = 0
+unitScale = 0.01
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale"]
+layout_mode = 2
+text = "Resolution Scale"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale"]
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 25.0
+value = 100.0
+
+[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale/HBoxContainer"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="WindowMode" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Windowed"
+popup/item_0/id = 0
+popup/item_1/text = "Borderless Fullscreen"
+popup/item_1/id = 1
+
+[node name="Resolution" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer"]
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "1280x720"
+popup/item_0/id = 0
+popup/item_1/text = "1920x1080"
+popup/item_1/id = 1
+popup/item_2/text = "2560x1440"
+popup/item_2/id = 2
+popup/item_3/text = "3840x2160"
+popup/item_3/id = 3
+
+[node name="Button" type="Button" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer"]
+layout_mode = 2
+text = "Apply"
