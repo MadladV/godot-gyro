@@ -19,11 +19,11 @@ public partial class StickSettingsMenu : PanelContainer
         };
         deadzone.OnValueChanged += (_, value) =>
         {
-            Singleton<ControllerSettings>.Instance.Deadzone = value / 100f;
+            Singleton<ControllerSettings>.Instance.Deadzone = value;
         };
         axialDeadzone.OnValueChanged += (_, value) =>
         {
-            Singleton<ControllerSettings>.Instance.AxialDeadzone = value / 100f;
+            Singleton<ControllerSettings>.Instance.AxialDeadzone = value;
         };
         curve.OnValueChanged += (_, value) =>
         {

@@ -8,11 +8,12 @@ public partial class SettingSlider : Control
     [Export] private Label label;
     [Export(PropertyHint.Enum, " ,x,%,°/s,°,s,ms")] private string suffix;
     [Export(PropertyHint.Enum, "0:0,0.0:1,0.00:2")] private int precision = 1;
+    [Export(PropertyHint.Range, "0, 1,")] private float unitScale = 1f;
     public override void _Ready()
     {
         hslider.ValueChanged += (value) =>
         {
-            OnValueChanged.Invoke(this, (float)value);
+            OnValueChanged.Invoke(this, (float)value * unitScale);
             switch (precision)
             {
                 case 0:

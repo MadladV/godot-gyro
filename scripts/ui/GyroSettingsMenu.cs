@@ -22,7 +22,7 @@ public partial class GyroSettingsMenu : PanelContainer
         };
         vertSensitivity.OnValueChanged += (_, value) =>
         {
-            Singleton<GyroSettings>.Instance.VerticalSensMul = value / 100f;
+            Singleton<GyroSettings>.Instance.VerticalSensMul = value;
         };
         activationMode.ItemSelected += (value) =>
         {
@@ -67,11 +67,11 @@ public partial class GyroSettingsMenu : PanelContainer
         };
         flickThreshold.OnValueChanged += (_, value) =>
         {   
-            Singleton<FlickStick>.Instance.FlickThreshold = value / 100f;
+            Singleton<FlickStick>.Instance.FlickThreshold = value;
         };
         flickTime.OnValueChanged += (_, value) =>
         {
-            Singleton<FlickStick>.Instance.FlickTime = value / 1000f;
+            Singleton<FlickStick>.Instance.FlickTime = value;
         };
         snapping.ItemSelected += (value) =>
         {
