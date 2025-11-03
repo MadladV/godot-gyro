@@ -19,10 +19,6 @@ public class LocalGyroSpace : IGyroSpace
 		YawAxis = yawAxis;
 	}
 
-	public LocalGyroSpace()
-	{
-	}
-
 	public Vector2 Transform(GyroState gyro)
 	{
 		// invert roll axis
