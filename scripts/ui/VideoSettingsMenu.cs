@@ -8,9 +8,9 @@ public partial class VideoSettingsMenu : PanelContainer
     [Export] private Button applyButton;
 
     private Vector2I[] resolutions = [new (1280, 720), new (1920, 1080), new (2560, 1440), new (3840, 2160)];
-    private float newResolutionScale;
-    private Vector2I newResolution;
-    private DisplayServer.WindowMode newDisplayMode;
+    private float newResolutionScale = 1.0f;
+    private Vector2I newResolution = new (1280, 720);
+    private DisplayServer.WindowMode newDisplayMode =  DisplayServer.WindowMode.Windowed;
     
     public override void _Ready()
     {
@@ -24,7 +24,14 @@ public partial class VideoSettingsMenu : PanelContainer
         };
         displayMode.ItemSelected += (value) =>
         {
-            newDisplayMode = (DisplayServer.WindowMode)value;
+            switch (value)
+            {
+                case 0:
+                    newDisplayMode = DisplayServer.WindowMode.Windowed;
+                    break;
+                case 1:
+                    newDisplayMode = DisplayServer.WindowMode.Fullscreen;
+            }
         };
         applyButton.Pressed += () =>
         {
