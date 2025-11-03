@@ -43,7 +43,7 @@ public partial class GyroSettingsMenu : PanelContainer
                     Singleton<GyroProcessor>.Instance.GyroSpace = new LocalGyroSpace(GyroAxis.Roll);
                     break;
                 case GyroOrientation.PLAYERSPACE:
-                    Singleton<GyroProcessor>.Instance.GyroSpace = new PlayerLeanGyroSpace();
+                    Singleton<GyroProcessor>.Instance.GyroSpace = new PlayerGyroSpace();
                     break;
                 case GyroOrientation.WORLDSPACE:
                     Singleton<GyroProcessor>.Instance.GyroSpace = new WorldGyroSpace();
