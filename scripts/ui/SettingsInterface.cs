@@ -4,36 +4,14 @@ using GyroHelpers;
 namespace GodotGyro.scripts.ui;
 public partial class SettingsInterface : Control
 {
-    [Export] private Button stickTab, gyroTab, videoTab, calibrationButton;
+    [Export] private Button calibrationButton;
     [Export] private Control stickSettings, gyroSettings, videoSettings;
-    [Export] private VBoxContainer settingsContainer;
+    [Export] private TabContainer tabContainer;
     [Export] private TextureRect escRect, escOutlineRect;
-    [Export] private OptionButton connectedGamepadsDropdown;
     [Export] private Label calibrationLabel;
     
     public override void _Ready()
     {
-        stickTab.Pressed += () =>
-        {
-            stickSettings.Visible = true;
-            gyroSettings.Visible = false;
-            videoSettings.Visible = false;
-        };
-        
-        gyroTab.Pressed += () =>
-        {
-            stickSettings.Visible = false;
-            gyroSettings.Visible = true;
-            videoSettings.Visible = false;
-        };
-        
-        videoTab.Pressed += () =>
-        {
-            stickSettings.Visible = false;
-            gyroSettings.Visible = false;
-            videoSettings.Visible = true;
-        };
-
         calibrationButton.Pressed += CalibrateGyro;
     }
 
@@ -41,9 +19,9 @@ public partial class SettingsInterface : Control
     {
         if (Input.IsActionJustPressed("ui_cancel"))
         {
-            settingsContainer.Visible = !settingsContainer.Visible;
-            escRect.Visible = !settingsContainer.Visible;
-            escOutlineRect.Visible = settingsContainer.Visible;
+            tabContainer.Visible = !tabContainer.Visible;
+            escRect.Visible = !tabContainer.Visible;
+            escOutlineRect.Visible = tabContainer.Visible;
         }
     }
 
