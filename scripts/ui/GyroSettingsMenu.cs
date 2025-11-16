@@ -6,7 +6,7 @@ namespace GodotGyro;
 public partial class GyroSettingsMenu : PanelContainer
 {
     [ExportGroup("Motion controls")]
-    [Export] private SettingSlider sensitivity, vertSensitivity, minThreshold, precisionThreshold;
+    [Export] private SettingSlider sensitivity, vertSensitivity, tighteningThreshold;
     [Export] private OptionButton activationMode, gyroRatchet, gyroOrientation;
     [ExportGroup("Flick Stick")]
     [Export] private CheckButton flickStickEnabled;
@@ -50,13 +50,9 @@ public partial class GyroSettingsMenu : PanelContainer
                     break;
             }
         };
-        minThreshold.OnValueChanged += (_, value) =>
+        tighteningThreshold.OnValueChanged += (_, value) =>
         {
-            Singleton<GyroSettings>.Instance.MinThreshold = value;
-        };
-        precisionThreshold.OnValueChanged += (_, value) =>
-        {
-            Singleton<GyroSettings>.Instance.PrecisionThreshold = value;
+            Singleton<GyroSettings>.Instance.TighteningThreshold = value;
         };
         
         // Flick stick settings
