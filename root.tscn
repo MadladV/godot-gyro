@@ -67,8 +67,10 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_gd4vy")
 
-[node name="Control" type="Control" parent="HUD" node_paths=PackedStringArray("triangleState", "squareState", "circleState", "crossState", "touchpadState", "gyroState")]
-layout_mode = 1
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GamepadOverlay" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("triangleState", "squareState", "circleState", "crossState", "touchpadState", "gyroState")]
+layout_mode = 3
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -88,7 +90,7 @@ crossState = NodePath("Cross")
 touchpadState = NodePath("Touchpad")
 gyroState = NodePath("Touchpad/GyroPauseState")
 
-[node name="Touchpad" type="TextureRect" parent="HUD/Control"]
+[node name="Touchpad" type="TextureRect" parent="CanvasLayer/GamepadOverlay"]
 layout_mode = 0
 offset_top = -200.0
 offset_right = 128.0
@@ -98,7 +100,7 @@ script = ExtResource("6_ub8w1")
 textureActive = SubResource("CompressedTexture2D_po8fv")
 textureInactive = ExtResource("5_ub8w1")
 
-[node name="GyroPauseState" type="Label" parent="HUD/Control/Touchpad"]
+[node name="GyroPauseState" type="Label" parent="CanvasLayer/GamepadOverlay/Touchpad"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -115,7 +117,7 @@ theme_override_font_sizes/font_size = 48
 text = "Active"
 horizontal_alignment = 1
 
-[node name="Triangle" type="TextureRect" parent="HUD/Control"]
+[node name="Triangle" type="TextureRect" parent="CanvasLayer/GamepadOverlay"]
 layout_mode = 0
 offset_top = -80.0
 offset_right = 128.0
@@ -125,7 +127,7 @@ script = ExtResource("6_ub8w1")
 textureActive = ExtResource("7_ynlg5")
 textureInactive = ExtResource("5_po8fv")
 
-[node name="Square" type="TextureRect" parent="HUD/Control"]
+[node name="Square" type="TextureRect" parent="CanvasLayer/GamepadOverlay"]
 layout_mode = 0
 offset_left = -80.0
 offset_right = 48.0
@@ -135,7 +137,7 @@ script = ExtResource("6_ub8w1")
 textureActive = ExtResource("9_1xb4a")
 textureInactive = ExtResource("8_ab83r")
 
-[node name="Circle" type="TextureRect" parent="HUD/Control"]
+[node name="Circle" type="TextureRect" parent="CanvasLayer/GamepadOverlay"]
 layout_mode = 0
 offset_left = 80.0
 offset_right = 208.0
@@ -145,7 +147,7 @@ script = ExtResource("6_ub8w1")
 textureActive = ExtResource("11_uwexw")
 textureInactive = ExtResource("10_0dnjj")
 
-[node name="Cross" type="TextureRect" parent="HUD/Control"]
+[node name="Cross" type="TextureRect" parent="CanvasLayer/GamepadOverlay"]
 layout_mode = 0
 offset_top = 80.0
 offset_right = 128.0
@@ -155,7 +157,7 @@ script = ExtResource("6_ub8w1")
 textureActive = ExtResource("13_tilu5")
 textureInactive = ExtResource("12_8pgb7")
 
-[node name="Interface" type="Control" parent="." node_paths=PackedStringArray("stickTab", "gyroTab", "videoTab", "calibrationButton", "stickSettings", "gyroSettings", "videoSettings", "settingsContainer", "escRect", "escOutlineRect", "calibrationLabel")]
+[node name="Interface" type="Control" parent="." node_paths=PackedStringArray("calibrationButton", "stickSettings", "gyroSettings", "videoSettings", "tabContainer", "escRect", "escOutlineRect", "calibrationLabel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -163,17 +165,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_28aoi")
-stickTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Stick")
-gyroTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Gyro")
-videoTab = NodePath("VBoxContainer/SettingsContainer/Tabs/Video")
-calibrationButton = NodePath("VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Calibrate")
-stickSettings = NodePath("VBoxContainer/SettingsContainer/StickSettings")
-gyroSettings = NodePath("VBoxContainer/SettingsContainer/GyroSettings")
-videoSettings = NodePath("VBoxContainer/SettingsContainer/VideoSettings")
-settingsContainer = NodePath("VBoxContainer/SettingsContainer")
+calibrationButton = NodePath("VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/Calibrate")
+stickSettings = NodePath("VBoxContainer/TabContainer/Stick")
+gyroSettings = NodePath("VBoxContainer/TabContainer/Gyro")
+videoSettings = NodePath("VBoxContainer/TabContainer/Video")
+tabContainer = NodePath("VBoxContainer/TabContainer")
 escRect = NodePath("VBoxContainer/EscButton")
 escOutlineRect = NodePath("VBoxContainer/EscButtonOutline")
-calibrationLabel = NodePath("VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Label")
+calibrationLabel = NodePath("VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/Label")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Interface"]
 layout_mode = 0
@@ -191,29 +190,13 @@ layout_mode = 2
 texture = ExtResource("5_bf3um")
 stretch_mode = 2
 
-[node name="SettingsContainer" type="VBoxContainer" parent="Interface/VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="Interface/VBoxContainer"]
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
+current_tab = 1
+tab_focus_mode = 1
 
-[node name="Tabs" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer"]
-layout_mode = 2
-
-[node name="Stick" type="Button" parent="Interface/VBoxContainer/SettingsContainer/Tabs"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "STICK"
-
-[node name="Gyro" type="Button" parent="Interface/VBoxContainer/SettingsContainer/Tabs"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "GYRO"
-
-[node name="Video" type="Button" parent="Interface/VBoxContainer/SettingsContainer/Tabs"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "VIDEO"
-
-[node name="StickSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("turnRate", "deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
+[node name="Stick" type="PanelContainer" parent="Interface/VBoxContainer/TabContainer" node_paths=PackedStringArray("turnRate", "deadzone", "axialDeadzone", "verticalSensitivity", "curve", "plot")]
 visible = false
 layout_mode = 2
 script = ExtResource("6_tw3kd")
@@ -223,11 +206,12 @@ axialDeadzone = NodePath("VBoxContainer/AxialDeadzone")
 verticalSensitivity = NodePath("VBoxContainer/VerticalSensitivity")
 curve = NodePath("VBoxContainer/Curve")
 plot = NodePath("VBoxContainer/Curve/Plot")
+metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick"]
 layout_mode = 2
 
-[node name="Turnrate" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="Turnrate" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -235,21 +219,21 @@ label = NodePath("HBoxContainer/Label")
 suffix = " °/s"
 precision = 0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Turnrate"]
 layout_mode = 2
 text = "Turn rate"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Turnrate"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Turnrate/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 120.0
 max_value = 1440.0
 value = 360.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Turnrate/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Turnrate/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "360°/s"
@@ -258,7 +242,7 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="VerticalSensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="VerticalSensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -267,21 +251,21 @@ suffix = " %"
 precision = 0
 unitScale = 0.01
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/VerticalSensitivity"]
 layout_mode = 2
 text = "Vertical sensitivity"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/VerticalSensitivity"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/VerticalSensitivity/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 10.0
 max_value = 200.0
 value = 67.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/VerticalSensitivity/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/VerticalSensitivity/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "67%"
@@ -290,7 +274,7 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="Deadzone" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="Deadzone" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -299,20 +283,20 @@ suffix = " %"
 precision = 0
 unitScale = 0.01
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Deadzone"]
 layout_mode = 2
 text = "Deadzone"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Deadzone"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Deadzone/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 50.0
 value = 10.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Deadzone/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Deadzone/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "10%"
@@ -321,7 +305,7 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="AxialDeadzone" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="AxialDeadzone" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -330,19 +314,19 @@ suffix = " %"
 precision = 0
 unitScale = 0.01
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/AxialDeadzone"]
 layout_mode = 2
 text = "Axial deadzone"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/AxialDeadzone"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/AxialDeadzone/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 50.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/AxialDeadzone/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/AxialDeadzone/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "0%"
@@ -351,21 +335,21 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="Curve" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="Curve" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
 label = NodePath("HBoxContainer/Label")
 suffix = " "
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Curve"]
 layout_mode = 2
 text = "Curve"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Curve"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Curve/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = -10.0
@@ -374,7 +358,7 @@ step = 0.1
 page = 1.0
 value = 3.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Curve/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "3.0"
@@ -383,59 +367,67 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="Plot" type="Control" parent="Interface/VBoxContainer/SettingsContainer/StickSettings/VBoxContainer/Curve"]
+[node name="Plot" type="Control" parent="Interface/VBoxContainer/TabContainer/Stick/VBoxContainer/Curve"]
 custom_minimum_size = Vector2(320, 320)
 layout_mode = 2
 script = ExtResource("8_gd4vy")
 
-[node name="GyroSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("sensitivity", "vertSensitivity", "minThreshold", "precisionThreshold", "activationMode", "gyroRatchet", "gyroOrientation", "flickStickEnabled", "flickStickSettingsUI", "flickThreshold", "flickTime", "snapping")]
+[node name="Gyro" type="PanelContainer" parent="Interface/VBoxContainer/TabContainer" node_paths=PackedStringArray("sensitivity", "vertSensitivity", "tighteningThreshold", "activationMode", "gyroRatchet", "gyroOrientation", "flickStickEnabled", "flickStickSettingsUI", "flickThreshold", "flickTime", "snapping")]
 layout_mode = 2
 script = ExtResource("7_gd4vy")
-sensitivity = NodePath("VBoxContainer/Sensitivity")
-vertSensitivity = NodePath("VBoxContainer/VertSensitivity")
-minThreshold = NodePath("VBoxContainer/MinThreshold")
-precisionThreshold = NodePath("VBoxContainer/PrecisionThreshold")
-activationMode = NodePath("VBoxContainer/ActivationMode/OptionButton")
-gyroRatchet = NodePath("VBoxContainer/GyroRatchet/OptionButton")
-gyroOrientation = NodePath("VBoxContainer/GyroOrientation/OptionButton")
-flickStickEnabled = NodePath("VBoxContainer/FlickStick/HBoxContainer/CheckButton")
-flickStickSettingsUI = NodePath("VBoxContainer/FlickStick/FlickStickSettings")
-flickThreshold = NodePath("VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold")
-flickTime = NodePath("VBoxContainer/FlickStick/FlickStickSettings/FlickTime")
-snapping = NodePath("VBoxContainer/FlickStick/FlickStickSettings/Snapping/OptionButton")
+sensitivity = NodePath("MarginContainer/ScrollContainer/VBoxContainer/Sensitivity")
+vertSensitivity = NodePath("MarginContainer/ScrollContainer/VBoxContainer/VertSensitivity")
+tighteningThreshold = NodePath("MarginContainer/ScrollContainer/VBoxContainer/TighteningThreshold")
+activationMode = NodePath("MarginContainer/ScrollContainer/VBoxContainer/ActivationMode/OptionButton")
+gyroRatchet = NodePath("MarginContainer/ScrollContainer/VBoxContainer/GyroRatchet/OptionButton")
+gyroOrientation = NodePath("MarginContainer/ScrollContainer/VBoxContainer/GyroOrientation/OptionButton")
+flickStickEnabled = NodePath("MarginContainer/ScrollContainer/VBoxContainer/FlickStick/HBoxContainer/CheckButton")
+flickStickSettingsUI = NodePath("MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings")
+flickThreshold = NodePath("MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold")
+flickTime = NodePath("MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickTime")
+snapping = NodePath("MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/Snapping/OptionButton")
+metadata/_tab_index = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings"]
+[node name="MarginContainer" type="MarginContainer" parent="Interface/VBoxContainer/TabContainer/Gyro"]
+layout_mode = 2
+theme_override_constants/margin_right = -15
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer"]
+custom_minimum_size = Vector2(320, 600)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Calibrate" type="Button" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="Calibrate" type="Button" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 text = "CALIBRATE"
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(320, 48)
 layout_mode = 2
 text = "Please calibrate the controller if you are experiencing drift."
 autowrap_mode = 2
 
-[node name="HSeparator2" type="HSeparator" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Sensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="Sensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
 label = NodePath("HBoxContainer/Label")
 suffix = "x"
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/Sensitivity"]
 layout_mode = 2
 text = "Sensitivity (Real World Scale)"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/Sensitivity"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/Sensitivity/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 0.1
@@ -443,7 +435,7 @@ max_value = 50.0
 step = 0.1
 value = 6.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/Sensitivity/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/Sensitivity/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "6.0x"
@@ -452,7 +444,7 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="VertSensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="VertSensitivity" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -461,21 +453,21 @@ suffix = " %"
 precision = 0
 unitScale = 0.01
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/VertSensitivity"]
 layout_mode = 2
 text = "Vertical Sensitivity Scale"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/VertSensitivity"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/VertSensitivity/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 10.0
 max_value = 200.0
 value = 67.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/VertSensitivity/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/VertSensitivity/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "67%"
@@ -484,14 +476,14 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="ActivationMode" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="ActivationMode" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/ActivationMode"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/ActivationMode"]
 layout_mode = 2
 text = "Activation mode"
 
-[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/ActivationMode"]
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/ActivationMode"]
 layout_mode = 2
 alignment = 1
 selected = 0
@@ -505,14 +497,14 @@ popup/item_2/id = 2
 popup/item_3/text = "Toggle"
 popup/item_3/id = 3
 
-[node name="GyroRatchet" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="GyroRatchet" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroRatchet"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/GyroRatchet"]
 layout_mode = 2
 text = "Ratchet"
 
-[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroRatchet"]
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/GyroRatchet"]
 layout_mode = 2
 alignment = 1
 selected = 0
@@ -522,14 +514,14 @@ popup/item_0/id = 0
 popup/item_1/text = "Button"
 popup/item_1/id = 1
 
-[node name="GyroOrientation" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="GyroOrientation" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroOrientation"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/GyroOrientation"]
 layout_mode = 2
 text = "Gyro Orientation"
 
-[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/GyroOrientation"]
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/GyroOrientation"]
 layout_mode = 2
 alignment = 1
 selected = 3
@@ -544,7 +536,7 @@ popup/item_2/id = 3
 popup/item_3/text = "World Space"
 popup/item_3/id = 4
 
-[node name="MinThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="TighteningThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -552,52 +544,21 @@ label = NodePath("HBoxContainer/Label")
 suffix = " °/s"
 precision = 2
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/TighteningThreshold"]
 layout_mode = 2
-text = "Deadzone"
+text = "Tightening threshold"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold"]
-layout_mode = 2
-
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-max_value = 1.0
-step = 0.01
-value = 0.36
-
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/MinThreshold/HBoxContainer"]
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-text = "0.36°/s"
-horizontal_alignment = 1
-vertical_alignment = 1
-clip_text = true
-text_overrun_behavior = 1
-
-[node name="PrecisionThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
-layout_mode = 2
-script = ExtResource("4_28aoi")
-hslider = NodePath("HBoxContainer/HSlider")
-label = NodePath("HBoxContainer/Label")
-suffix = " °/s"
-precision = 2
-
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold"]
-layout_mode = 2
-text = "Precision threshold"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/TighteningThreshold"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/TighteningThreshold/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 5.0
 step = 0.01
 value = 0.75
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/PrecisionThreshold/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/TighteningThreshold/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "0.75°/s"
@@ -606,28 +567,28 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="HSeparator" type="HSeparator" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="FlickStick" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer"]
+[node name="FlickStick" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Flick Stick"
 
-[node name="CheckButton" type="CheckButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/HBoxContainer"]
+[node name="CheckButton" type="CheckButton" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/HBoxContainer"]
 layout_mode = 2
 
-[node name="FlickStickSettings" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick"]
+[node name="FlickStickSettings" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick"]
 visible = false
 layout_mode = 2
 
-[node name="FlickThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
+[node name="FlickThreshold" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -635,19 +596,19 @@ label = NodePath("HBoxContainer/Label")
 suffix = "%"
 precision = 0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold"]
 layout_mode = 2
 text = "Flick Threshold"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 value = 90.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickThreshold/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "90%"
@@ -656,7 +617,7 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="FlickTime" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
+[node name="FlickTime" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -665,14 +626,14 @@ suffix = "ms"
 precision = 0
 unitScale = 0.001
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickTime"]
 layout_mode = 2
 text = "Flick Time"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickTime"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickTime/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 100.0
@@ -680,7 +641,7 @@ max_value = 5000.0
 step = 100.0
 value = 100.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/FlickTime/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/FlickTime/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "100 ms"
@@ -689,14 +650,14 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="Snapping" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings"]
+[node name="Snapping" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/Snapping"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/Snapping"]
 layout_mode = 2
 text = "Snapping"
 
-[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/Snapping"]
+[node name="OptionButton" type="OptionButton" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/Snapping"]
 layout_mode = 2
 alignment = 1
 selected = 0
@@ -715,7 +676,7 @@ popup/item_4/id = 4
 popup/item_5/text = "Eight"
 popup/item_5/id = 5
 
-[node name="SnappingForwardDeadzone" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
+[node name="SnappingForwardDeadzone" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -723,20 +684,20 @@ label = NodePath("HBoxContainer/Label")
 suffix = "°"
 precision = 0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone"]
 layout_mode = 2
 text = "Snapping Forward Deadzone"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 max_value = 45.0
 value = 7.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/GyroSettings/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Gyro/MarginContainer/ScrollContainer/VBoxContainer/FlickStick/FlickStickSettings/SnappingForwardDeadzone/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "7°"
@@ -745,7 +706,7 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="VideoSettings" type="PanelContainer" parent="Interface/VBoxContainer/SettingsContainer" node_paths=PackedStringArray("resolutionScale", "windowResolution", "displayMode", "applyButton")]
+[node name="Video" type="PanelContainer" parent="Interface/VBoxContainer/TabContainer" node_paths=PackedStringArray("resolutionScale", "windowResolution", "displayMode", "applyButton", "buttonPromptCanvas")]
 visible = false
 layout_mode = 2
 script = ExtResource("9_qw60f")
@@ -753,11 +714,13 @@ resolutionScale = NodePath("VBoxContainer/ResolutionScale")
 windowResolution = NodePath("VBoxContainer/Resolution")
 displayMode = NodePath("VBoxContainer/WindowMode")
 applyButton = NodePath("VBoxContainer/Button")
+buttonPromptCanvas = NodePath("../../../../CanvasLayer")
+metadata/_tab_index = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Video"]
 layout_mode = 2
 
-[node name="ResolutionScale" type="VBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
+[node name="ResolutionScale" type="VBoxContainer" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer" node_paths=PackedStringArray("hslider", "label")]
 layout_mode = 2
 script = ExtResource("4_28aoi")
 hslider = NodePath("HBoxContainer/HSlider")
@@ -766,20 +729,20 @@ suffix = "%"
 precision = 0
 unitScale = 0.01
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer/ResolutionScale"]
 layout_mode = 2
 text = "Resolution Scale"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer/ResolutionScale"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale/HBoxContainer"]
+[node name="HSlider" type="HSlider" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer/ResolutionScale/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 min_value = 25.0
 value = 100.0
 
-[node name="Label" type="Label" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer/ResolutionScale/HBoxContainer"]
+[node name="Label" type="Label" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer/ResolutionScale/HBoxContainer"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 text = "100%"
@@ -788,7 +751,7 @@ vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 1
 
-[node name="WindowMode" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer"]
+[node name="WindowMode" type="OptionButton" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer"]
 layout_mode = 2
 selected = 0
 item_count = 2
@@ -797,7 +760,7 @@ popup/item_0/id = 0
 popup/item_1/text = "Borderless Fullscreen"
 popup/item_1/id = 1
 
-[node name="Resolution" type="OptionButton" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer"]
+[node name="Resolution" type="OptionButton" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer"]
 layout_mode = 2
 selected = 0
 item_count = 4
@@ -810,6 +773,6 @@ popup/item_2/id = 2
 popup/item_3/text = "3840x2160"
 popup/item_3/id = 3
 
-[node name="Button" type="Button" parent="Interface/VBoxContainer/SettingsContainer/VideoSettings/VBoxContainer"]
+[node name="Button" type="Button" parent="Interface/VBoxContainer/TabContainer/Video/VBoxContainer"]
 layout_mode = 2
 text = "Apply"
