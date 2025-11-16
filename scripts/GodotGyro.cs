@@ -7,6 +7,7 @@ namespace GodotGyro;
 
 /// <summary>
 /// Class meant to provide simple and easy to use abstractions for SDL and GyroHelpers
+/// Instance of this class calls <see cref="SDL.Init">SDL.Init(InitFlags.Gamepad)</see> by default
 /// </summary>
 public class GodotGyro
 {
@@ -40,7 +41,8 @@ public class GodotGyro
     public void Update()
     {
         GyroInput.Begin();
-        // NOTE: Things go awry when more than a single SDL.PollEvent() instance is processed, could be worth moving it to another dedicated class and call related functions from within it
+        // NOTE: Things go awry when more than a single SDL.PollEvent() instance is processed,
+        // could be worth moving it to another dedicated class and call related functions from within it
         while (SDL.PollEvent(out SDL.Event @event))
         {
             switch ((SDL.EventType)@event.Type)
@@ -79,9 +81,9 @@ public class GodotGyro
     
     public bool IsAiming;
     /// <summary>
-    /// Evaluates GyroSettings (Activation Mode and Ratchet) to determine whether the Gyro input is paused or not.
+    /// Evaluates GyroSettings (<see cref="GyroSettings.ActivationMode">Activation Mode</see> and <see cref="GyroSettings.Ratchet">Ratchet</see>) to determine whether the Gyro input is paused or not.
     /// </summary>
-    /// <returns>True if the Gyroscope input should be ignored.</returns>
+    /// <returns>True if the Gyroscope input is paused.</returns>
     public bool IsPaused()
     {
         if (Input.IsActionJustPressed("pauseGyro"))
@@ -125,9 +127,9 @@ public class GodotGyro
     }
 
     /// <summary>
-    /// Processes Gyro sensor data and applies user settings (Sensitivity, Thresholds)
+    /// Processes Gyro sensor data and applies user settings (Sensitivity, Tightening)
     /// </summary>
-    /// <param name="delta"></param>
+    /// <param name="delta">Delta Time</param>
     /// <returns>Rotation delta in Euler angles (radians)</returns>
     public Vector3 ProcessGyro(float delta)
     {
@@ -135,26 +137,14 @@ public class GodotGyro
         angleDelta = angleDelta with { Y = angleDelta.Y * GyroSettings.VerticalSensMul };
         angleDelta *= GyroSettings.Sensitivity;
         
-        // Gyro velocity in radians per second
-        float gyroSpeed = angleDelta.Length() / delta; 
-            
-        // Threshold for inputs to be ignored in radians per second (default 0.36°/s)
-        // Motion below this threshold is discarded by GyroProcessor.Tightening
-        float minThreshold = GyroSettings.MinThreshold * Mathf.Pi / 180f; 
-        
-        // threshold for inputs to be slowed down in radians per second (default 0.75°/s)
-        float precisionThreshold = GyroSettings.PrecisionThreshold * Mathf.Pi / 180f; 
-            
-        if (gyroSpeed < precisionThreshold)
-        {
-            // linear interpolation for gyro velocities between deadzone and precision threshold
-            float precision = Mathf.Remap(gyroSpeed, minThreshold, precisionThreshold, 0f, 1f); 
-            angleDelta *= precision;
-        }
-        
         return (new Quaternion(Vector3.Up, angleDelta.Y) * new Quaternion(Vector3.Right, angleDelta.X)).GetEuler();
     }
     
+    /// <summary>
+    /// Parses data returned by Gamepad Sensor to System.Numerics.Vector3
+    /// </summary>
+    /// <param name="event">SDL.EventType.GamepadSensorUpdate</param>
+    /// <returns>Sensor data (Accel, Gyro) as Vector3</returns>
     private static unsafe System.Numerics.Vector3 ParseGSensorData(SDL.GamepadSensorEvent @event)
     {
         System.Numerics.Vector3 result = new (

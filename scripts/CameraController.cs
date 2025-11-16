@@ -49,6 +49,11 @@ public partial class CameraController : Camera3D
         AdsAlpha += delta * (Input.IsActionPressed("aim") ? 3f : -3f);
         Fov = float.Lerp(90f, 60f, AdsAlpha);
     }
+    /// <summary>
+    /// Implementation of <see href="https://www.ea.com/en/games/battlefield/battlefield-2042/news/dev-notes-uniform-soldier-aiming">Uniform Aim</see> meant to maintain consistent input-to-monitor-distance ratio.
+    /// </summary>
+    /// <param name="currentFov">Field of View of currently used camera.</param>
+    /// <returns>Aim sensitivity scalar</returns>
     private float AimSensitivityMultiplier(float currentFov)
     {
         float hip = Mathf.DegToRad(hipFov * 0.5f);
@@ -56,6 +61,12 @@ public partial class CameraController : Camera3D
 
         return (float)Math.Pow(Mathf.Tan(current) / Mathf.Tan(hip), 1.78f); // Uniform Aiming for 16:9 aspect ratio
     }
+    /// <summary>
+    /// Handles stick input, including Deadzones (<see cref="ControllerSettings.Deadzone">Circular</see> and <see cref="ControllerSettings.AxialDeadzone">Axial</see>), and <see cref="ControllerSettings.Curve">Power Curve</see>
+    /// </summary>
+    /// <param name="rightStick">Stick deflection as Vector2</param>
+    /// <param name="delta">Delta Time</param>
+    /// <returns>Camera rotation vector</returns>
     private Vector3 ProcessRightStick(Vector2 rightStick, float delta)
     {
         // Deadzone
